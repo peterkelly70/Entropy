@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.animation import FuncAnimation
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout, QHBoxLayout, 
-                             QPushButton, QLineEdit, QLabel, QCheckBox, QTextEdit, QLayout, QSizePolicy)
+                             QPushButton, QLineEdit, QLabel, QCheckBox, QTextEdit, QLayout, QSizePolicy, QFileDialog)
 from PyQt6.QtCore import Qt, QTimer, QSize, QRect, QPoint
 from PyQt6.QtGui import QImage, QPixmap
 import seaborn as sns
@@ -12,6 +12,8 @@ from scipy import stats
 import sys
 import logging
 import io
+import json
+import os
 
 # Configure logging for better debugging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -201,6 +203,24 @@ def copy_text_to_clipboard(text):
     QApplication.clipboard().setText(text)
     print("Text copied to clipboard!")
 
+# Function to save a matplotlib figure as PNG
+def save_as_png(figure, suggested_filename="plot.png"):
+    filename, _ = QFileDialog.getSaveFileName(None, "Save Plot as PNG", suggested_filename, "PNG Files (*.png)")
+    if filename:
+        figure.savefig(filename, format='png', dpi=300, bbox_inches='tight')
+        print(f"Plot saved as {filename}")
+
+# Function to save text as PNG (using matplotlib to render text as image)
+def save_text_as_png(text, suggested_filename="text.png"):
+    fig = plt.figure(figsize=(10, len(text.split('\n')) * 0.5))
+    plt.text(0.5, 0.5, text, wrap=True, ha='center', va='center', fontsize=12)
+    plt.axis('off')
+    filename, _ = QFileDialog.getSaveFileName(None, "Save Text as PNG", suggested_filename, "PNG Files (*.png)")
+    if filename:
+        fig.savefig(filename, format='png', dpi=300, bbox_inches='tight', transparent=True)
+        plt.close(fig)
+        print(f"Text saved as {filename}")
+
 class GOLApp(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -223,8 +243,12 @@ class GOLApp(QMainWindow):
         self.canvas1 = FigureCanvasQTAgg(self.fig1)
         layout1 = QVBoxLayout(self.tab1)
         layout1.addWidget(self.canvas1)
+        button_layout1 = QHBoxLayout()
         self.copy_button1 = QPushButton("Copy to Clipboard", clicked=lambda: copy_to_clipboard(self.fig1))
-        layout1.addWidget(self.copy_button1)
+        button_layout1.addWidget(self.copy_button1)
+        self.save_button1 = QPushButton("Save as PNG", clicked=lambda: save_as_png(self.fig1, "original_cht_plot.png"))
+        button_layout1.addWidget(self.save_button1)
+        layout1.addLayout(button_layout1)
 
         # Tab 2: Perturbed C_HT Plot
         self.tab2 = QWidget()
@@ -233,8 +257,12 @@ class GOLApp(QMainWindow):
         self.canvas2 = FigureCanvasQTAgg(self.fig2)
         layout2 = QVBoxLayout(self.tab2)
         layout2.addWidget(self.canvas2)
+        button_layout2 = QHBoxLayout()
         self.copy_button2 = QPushButton("Copy to Clipboard", clicked=lambda: copy_to_clipboard(self.fig2))
-        layout2.addWidget(self.copy_button2)
+        button_layout2.addWidget(self.copy_button2)
+        self.save_button2 = QPushButton("Save as PNG", clicked=lambda: save_as_png(self.fig2, "perturbed_cht_plot.png"))
+        button_layout2.addWidget(self.save_button2)
+        layout2.addLayout(button_layout2)
 
         # Tab 3: Grid Visualization
         self.tab3 = QWidget()
@@ -253,8 +281,12 @@ class GOLApp(QMainWindow):
         self.analysis_text.setReadOnly(True)
         layout4 = QVBoxLayout(self.tab4)
         layout4.addWidget(self.analysis_text)
+        button_layout4 = QHBoxLayout()
         self.copy_button3 = QPushButton("Copy to Clipboard", clicked=lambda: copy_text_to_clipboard(self.analysis_text.toPlainText()))
-        layout4.addWidget(self.copy_button3)
+        button_layout4.addWidget(self.copy_button3)
+        self.save_button3 = QPushButton("Save as PNG", clicked=lambda: save_text_as_png(self.analysis_text.toPlainText(), "analysis_results.png"))
+        button_layout4.addWidget(self.save_button3)
+        layout4.addLayout(button_layout4)
 
         # Control panel with FlowLayout
         control_widget = QWidget()
@@ -547,7 +579,16 @@ class GOLApp(QMainWindow):
         plt.title("Aggregate Complexity Evolution (10 Runs)")
         plt.legend()
         plt.grid(True)
+
+        # Save the plot before displaying
+        plt.savefig("aggregate_cht_plot.png", format='png', dpi=300, bbox_inches='tight')
+        print("Aggregate plot saved as 'aggregate_cht_plot.png'")
+
+        # Display the plot in a new window (optional, for standalone viewing)
         plt.show()
+
+        # Optionally, you can add a button or method to copy this plot to clipboard or save it differently,
+        # but for now, it’s saved as a file and displayed
 
     def save_run(self):
         if not self.original_states:
