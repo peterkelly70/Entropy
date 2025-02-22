@@ -110,5 +110,5 @@ This project is licensed under the Creative Commons CC3 License - see the LICENS
 ## Acknowledgments
 
 Thanks to the xAI community and Conway’s Game of Life enthusiasts for inspiration. Special thanks to tools like PyQt6, matplotlib, and numpy for enabling this analysis.
-Many Thanks to Grok,ChatGPT and Clude, whos help in forualte the text and writing a bunch of Python Code I had little interets in doing.
+Many Thanks to Grok,ChatGPT and Clude, whos help in formualting the text and writing a bunch of Python Code I had little interets in doing.
 All ideas are mine, even if a bulk of the words aren't
