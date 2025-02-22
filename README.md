@@ -80,6 +80,9 @@ Conway’s Game of Life is a cellular automaton where each cell in a grid follow
   
   where \(H\) is the normalized Hamming distance, \(T\) is the normalized transition count, and \(␇lpha = 0.5\). \(C_{HT}\) ranges from 0 (perfect order, e.g., all 0s or all 1s) to 0.5 (maximum disorder, e.g., alternating 0s and 1s). In `golLab.py`, \(C_{HT}\) tracks how complexity simplifies from ~0.5 (high entropy) to ~0 (low complexity, sparse patterns) over 1,000 steps.
 
+### Connection to Dissipative Structures
+The findings in `golLab.py` echo Ilya Prigogine’s work on dissipative structures, where complex, ordered patterns emerge from high-entropy systems far from equilibrium through energy dissipation. In Conway’s Game of Life, the deterministic rules serve as a computational analogue, transforming a maximally random, high-entropy grid into stable, low-complexity attractors via the simplification of complexity. This parallels Prigogine’s observation that entropy can drive order in systems like chemical reactions or biological processes, suggesting that the emergent order in Conway’s Game of Life reflects universal principles of self-organization seen in nature, from chemical oscillations to cosmic structures.
+
 ## Hypotheses and Findings
 
 ### Low-Complexity Attractors
